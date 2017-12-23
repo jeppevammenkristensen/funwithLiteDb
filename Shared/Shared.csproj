@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiteDb" Version="4.1.0" />
+    <PackageReference Include="MediatR" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="LiteDB">
+      <HintPath>..\..\..\Users\Jeppe Roi Kristensen\.nuget\packages\litedb\4.1.0\lib\netstandard2.0\LiteDB.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
