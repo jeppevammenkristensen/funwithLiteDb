@@ -18,11 +18,18 @@ namespace Shared.Commands
             using (var liteDatabase = _provider.GetDatabase())
             {
                 var film = liteDatabase.GetCollection<Film>();
-                return film.Insert(new Film()
+                var entity = new Film()
                 {
                     Title = request.Title,
                     Year = request.Year
-                }).AsInt32;
+                };
+
+                if (request.MediaType != null)
+                {
+                    entity.Medias.Add(new Media(){ Type = request.MediaType.Value, Amount = request.MediaAmount ?? 1});
+                }
+
+                return film.Insert(entity).AsInt32;
             }
         }
     }
@@ -31,5 +38,8 @@ namespace Shared.Commands
     {
         public string Title { get; set; }
         public int? Year { get; set; }
+
+        public int? MediaAmount { get; set; }
+        public TypeofMedia? MediaType { get; set; }
     }
 }

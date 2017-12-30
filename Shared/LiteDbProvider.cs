@@ -24,7 +24,12 @@ namespace Shared
                 films.EnsureIndex(film => film.Title);
                 films.EnsureIndex(film => film.Year);
                 films.EnsureIndex(film => film.Medias);
+
+                var storages = db.GetCollection<Storage>();
+                storages.EnsureIndex(x => x.Title, true);
             }
+
+            this.IsEnsured = true;
 
             return this;
         }

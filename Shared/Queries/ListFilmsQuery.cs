@@ -16,6 +16,7 @@ namespace Shared.Queries
 
         public int Page { get; }
         public int PageSize { get; }
+        public string Query { get; set; }
     }
 
     public class ListFilmsQueryHandler : IRequestHandler<ListFilmsQuery, IEnumerable<Film>>
@@ -31,7 +32,9 @@ namespace Shared.Queries
         {
             using (var liteDatabase = _provider.GetDatabase())
             {
-                var collection = liteDatabase.GetCollection<Film>();
+                var collection = liteDatabase.GetCollection<Film>()
+                    .Include(x => x.Storages);
+
                 return collection.Find(Query.All("Title"), request.Page * request.PageSize, request.PageSize);
             }
         }
