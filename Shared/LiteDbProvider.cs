@@ -1,4 +1,5 @@
-﻿using LiteDB;
+﻿using System.IO;
+using LiteDB;
 
 namespace Shared
 {
@@ -6,8 +7,7 @@ namespace Shared
     {
         private readonly string _connectionPath;
         private bool IsEnsured = false;
-
-
+        
         public LiteDbProvider(string connectionPath)
         {
             _connectionPath = connectionPath;
@@ -15,8 +15,11 @@ namespace Shared
 
         public LiteDbProvider EnsureIndexes()
         {
+
             if (IsEnsured)
                 return this;
+
+            EnsureConnectionPath(_connectionPath);
 
             using (var db = new LiteDatabase(_connectionPath))
             {
@@ -25,6 +28,7 @@ namespace Shared
                 films.EnsureIndex(film => film.Year);
                 films.EnsureIndex(film => film.Medias);
 
+
                 var storages = db.GetCollection<Storage>();
                 storages.EnsureIndex(x => x.Title, true);
             }
@@ -32,6 +36,15 @@ namespace Shared
             this.IsEnsured = true;
 
             return this;
+        }
+
+        private void EnsureConnectionPath(string connectionPath)
+        {
+            var fileInfo = new FileInfo(connectionPath);
+            if (!fileInfo.Directory.Exists)
+            {
+                Directory.CreateDirectory(fileInfo.DirectoryName);
+            }
         }
 
         public LiteDatabase GetDatabase()
