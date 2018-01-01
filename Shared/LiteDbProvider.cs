@@ -24,11 +24,13 @@ namespace Shared
             using (var db = new LiteDatabase(_connectionPath))
             {
                 var films = db.GetCollection<Film>();
+                
                 films.EnsureIndex(film => film.Title);
                 films.EnsureIndex(film => film.Year);
                 films.EnsureIndex(film => film.Medias);
-
-
+                films.EnsureIndex(film => film.ExternalId);
+                films.EnsureIndex(film => film.ExternalSource);
+                
                 var storages = db.GetCollection<Storage>();
                 storages.EnsureIndex(x => x.Title, true);
             }

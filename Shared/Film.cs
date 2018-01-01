@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using LiteDB;
+using Shared.Commands;
 
 namespace Shared
 {
@@ -26,5 +27,7 @@ namespace Shared
 
         public string Title { get; set; }
         public int? Year { get; set; }
+        public string ExternalId { get; set; }
+        public ExternalSource? ExternalSource { get; set; }
     }
 }

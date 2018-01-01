@@ -5,6 +5,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using App.EntryActions;
 using MediatR;
+using MediatR.Pipeline;
+using Microsoft.Extensions.Configuration;
 using Shared;
 using Shared.Commands;
 
@@ -21,6 +23,8 @@ namespace App
             Entries.Add(new AddStorageToFilm());
             Entries.Add(new ViewStorageEntryAction());
             Entries.Add(new ViewFilmsEntryAction());
+            Entries.Add(new SearchMovieDbEntryAction());
+            Entries.Add(new RemoveDuplicatesEntryAction());
         }
 
         public async Task DoFilmEntry()
@@ -86,6 +90,10 @@ namespace App
 
         private static IMediator GetMediator()
         {
+            var configuration = new ConfigurationBuilder()
+                .AddUserSecrets<FilmEntry>()
+                .Build();
+
             var container = new StructureMap.Container(cfg =>
             {
                 cfg.Scan(scanner =>
@@ -94,11 +102,17 @@ namespace App
                     scanner.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<>)); // Handlers with no response
                     scanner.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>)); // Handlers with a response
                     scanner.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
+                    scanner.ConnectImplementationsToTypesClosing(typeof(IRequestPreProcessor<>));
                 });
+
+
+                cfg.For(typeof(IPipelineBehavior<,>)).Add(typeof(RequestPreProcessorBehavior<,>));
+
                 cfg.For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
                 cfg.For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));
                 cfg.For<IMediator>().Use<Mediator>();
                 cfg.For<LiteDbProvider>().Use(x => new LiteDbProvider("c:\\temp\\dvdcollection.db")).Singleton();
+                cfg.For<IConfigurationRoot>().Use(x => configuration);
             });
 
             var mediator = container.GetInstance<IMediator>();

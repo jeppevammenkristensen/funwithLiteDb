@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Shared;
+using Shared.Queries;
 
 namespace App
 {
@@ -26,6 +27,19 @@ namespace App
             foreach (var storage in sourceAsList)
             {
                 Console.WriteLine($"{storage.Id}\t{storage.Title}");
+            }
+
+            return sourceAsList;
+        }
+
+        public static IList<Result> Display(this IEnumerable<Result> source)
+        {
+            var sourceAsList = source.ToList();
+            var id = 1;
+
+            foreach (var result in sourceAsList)
+            {
+                Console.WriteLine($"{id++}:{result.Id}\t{result.Title}\t{result.ReleaseDate?.Year}");
             }
 
             return sourceAsList;

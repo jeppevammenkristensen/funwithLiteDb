@@ -29,6 +29,12 @@ namespace Shared.Commands
                     entity.Medias.Add(new Media(){ Type = request.MediaType.Value, Amount = request.MediaAmount ?? 1});
                 }
 
+                if (request.ExternalSource != null && !string.IsNullOrEmpty(request.ExternalId))
+                {
+                    entity.ExternalId = request.ExternalId;
+                    entity.ExternalSource = request.ExternalSource;
+                }
+
                 return film.Insert(entity).AsInt32;
             }
         }
@@ -41,5 +47,14 @@ namespace Shared.Commands
 
         public int? MediaAmount { get; set; }
         public TypeofMedia? MediaType { get; set; }
+
+        public string ExternalId { get; set; }
+
+        public ExternalSource? ExternalSource { get; set; }
+    }
+
+    public enum ExternalSource
+    {
+        TheMovieDatabase
     }
 }
